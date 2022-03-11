@@ -28,7 +28,6 @@ def parse_arguments():
   parser_findings.add_argument('-o', '--output', action='store_true', help='save the results in a csv file')
   parser_findings.add_argument('--skip-pec', dest='skip_public_exploit_check', action='store_true', help='skip public exploit check')
 
-
   args = parser.parse_args()
 
   if args.task == 'findings':

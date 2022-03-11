@@ -14,9 +14,7 @@ def check_inspector_findings(args):
   findings = get_inspector_findings(args)
   if not findings:
     return
-
   processed_findings = process_findings(findings, args)
-  
   data = format_findings_data(processed_findings, args)
   output_table('\U0001F575  Findings', data)
   if args.output:
