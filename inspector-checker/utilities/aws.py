@@ -10,7 +10,14 @@ def inspector2_list_findings(region, filter_criteria):
   try:
     regional_findings = []
     inspector2_client = boto3.client('inspector2', region_name=region)
-    regional_findings = inspector2_client.list_findings(filterCriteria=filter_criteria)['findings']
+    response = inspector2_client.list_findings(filterCriteria=filter_criteria)
+    regional_findings.extend(response['findings'])
+    while 'nextToken' in response:
+      response = inspector2_client.list_findings(
+        filterCriteria=filter_criteria,
+        nextToken=response['nextToken']
+      )
+      regional_findings.extend(response['findings'])
   except EndpointConnectionError:
     endpoint_connection_error(region)
   except NoCredentialsError:

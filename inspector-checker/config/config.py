@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-inspector_checker_version = '1.0'
+inspector_checker_version = '1.1'
 
 inspector_supported_regions = [
   'us-east-1',
@@ -31,3 +31,17 @@ allowed_finding_severities = [
   'INFORMATIONAL',
   'UNTRIAGED'
 ]
+
+date_format = '%m-%d-%Y'
+
+emojis = {
+  'chart': '\U0001F4C8',
+  'globe': '\U0001F30D',
+  'factory': '\U0001F3ED',
+  'magnifying_glass': '\U0001F50D',
+  'detective': '\U0001F575',
+  'robot': '\U0001F916',
+  'map': '\U0001F5FA',
+  'pin': '\U0001F4CD',
+  'prohibited': '\U0001F6AB'
+}
