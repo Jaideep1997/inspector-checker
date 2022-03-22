@@ -22,7 +22,7 @@ ln -s $(pwd)/inspector-checker/inspector-checker.py /usr/local/bin/inspector-che
 - Check findings
 
 ## Coverage
-The check coverage function provides insight into how instances are covered (i.e. being scanned). It can also highlight the instances that are not covered.
+The check coverage function provides insight into how many instances are covered (i.e. being scanned). It can also highlight the instances that are not covered.
 
 By default, it shows:
 - Active instances
