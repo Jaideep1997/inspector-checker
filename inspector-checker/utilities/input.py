@@ -33,7 +33,7 @@ def parse_arguments():
   parser_findings_time_group.add_argument('--hours', dest='time_hours', type=check_time_hours_days_input, help='Amount of hours before now to check for findings')
   parser_findings_time_group.add_argument('--days', dest='time_days', type=check_time_hours_days_input, help='Amount of days before now to check for findings')
   parser_findings_time_group.add_argument('--month', dest='time_month', type=check_time_month_input, help='Month to check for findings. Without --year option default to current year')
-  parser_findings.add_argument('--year', dest='time_year', type=check_time_year_input, default=datetime.now().year, help='Year to check for findings. Must have --month specified')
+  parser_findings.add_argument('--year', dest='time_year', type=check_time_year_input, help='Year to check for findings. Must have --month specified')
   parser_findings.add_argument('--start-date', dest='time_start_date', type=check_time_date_input, help='Start date to check for findings')
   parser_findings.add_argument('--end-date', dest='time_end_date', type=check_time_date_input, help='End date to check findings')
 
@@ -55,8 +55,9 @@ def parse_arguments():
     if args.time_year and not args.time_month:
       parser_findings.error('argument --month: must be specified with argument --year')
     # Month and year combination cannot be in the future
-    if args.time_year and args.time_month:
+    if args.time_month:
       current_year = datetime.now().year
+      if not args.time_year: args.time_year = current_year
       # Future year
       if args.time_year > current_year:
         parser_findings.error('argument --year: cannot be in the future')
@@ -99,27 +100,27 @@ def check_time_hours_days_input(time):
   except:
     raise argparse.ArgumentTypeError(f'invalid days, must be a positive integer value: {time}')
 
-def check_time_month_input(time):
+def check_time_month_input(month):
   try:
     months = calendar.month_name[1:]
-    if time.capitalize() not in months:
+    if month.capitalize() not in months:
       raise Exception
-    return time
+    return month
   except:
-    raise argparse.ArgumentTypeError(f'invalid month: {time}')
+    raise argparse.ArgumentTypeError(f'invalid month: {month}')
 
-def check_time_year_input(time):
+def check_time_year_input(year):
   try:
     year_pattern = '^\d{4}$'
-    year_search = re.search(year_pattern, time).group(0)
-    return int(time)
+    year_search = re.search(year_pattern, year).group(0)
+    return int(year)
   except AttributeError:
-    raise argparse.ArgumentTypeError(f'invalid year: {time}')
+    raise argparse.ArgumentTypeError(f'invalid year: {year}')
 
-def check_time_date_input(time):
+def check_time_date_input(date):
   try:
-    datetime.strptime(time, config.date_format)
-    return time
+    datetime.strptime(date, config.date_format)
+    return date
   except ValueError:
     raise argparse.ArgumentTypeError(f'invalid format, should be {config.date_format}')
 
