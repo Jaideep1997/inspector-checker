@@ -6,7 +6,7 @@ import re
 import calendar
 import datetime
 
-from config.config import inspector_supported_regions, inspector_finding_severities, inspector_finding_types, date_format
+from config import config
 
 def parse_arguments():
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -14,16 +14,17 @@ def parse_arguments():
 
   # Coverage
   parser_coverage = subparser.add_parser('coverage', formatter_class=argparse.ArgumentDefaultsHelpFormatter, help='Check the coverage of Inspector scanning')
-  parser_coverage.add_argument('-r', '--region', dest='regions', type=check_region_input, default=inspector_supported_regions, help='region to check Inspector')
+  parser_coverage.add_argument('-r', '--region', dest='regions', type=check_region_input, default=config.inspector_supported_regions, help='region to check Inspector')
   parser_coverage.add_argument('-d', '--detailed', action='store_true', help='show uncovered instances')
   parser_coverage.add_argument('-o', '--output', action='store_true', help='save the results in a csv file')
 
   # Findings
   parser_findings = subparser.add_parser('findings', formatter_class=argparse.ArgumentDefaultsHelpFormatter, help='Check Inspector findings')
 
-  parser_findings.add_argument('-r', '--region', dest='regions', type=check_region_input, default=inspector_supported_regions, help='region to check Inspector')
-  parser_findings.add_argument('-s', '--severities', type=check_severities_input, default='critical,high', help=f'comma-separated list of severities. Options: {[s.lower() for s in inspector_finding_severities]}')
-  parser_findings.add_argument('-t', '--type', dest='finding_type', type=check_finding_type_input, default='package', help=f'type of finding. Options: {[finding_type for finding_type in inspector_finding_types]}')
+  parser_findings.add_argument('-r', '--region', dest='regions', type=check_region_input, default=config.inspector_supported_regions, help='region to check Inspector')
+  parser_findings.add_argument('-s', '--severities', type=check_severities_input, default='critical,high', help=f'comma-separated list of severities. Options: {[s.lower() for s in config.inspector_finding_severities]}')
+  parser_findings.add_argument('-t', '--type', dest='finding_type', type=check_finding_type_input, default='package', help=f'type of finding. Options: {[finding_type for finding_type in config.inspector_finding_types]}')
+  parser_findings.add_argument('--status', dest='finding_status', type=check_finding_status_input, default='active', help=f'status of findings. Options: {config.inspector_finding_statuses}')
   parser_findings.add_argument('-c', '--cve-id', type=check_cve_id, help='CVE to check')
   parser_findings.add_argument('-i', '--instance-id', type=check_instance_id_input, help='specific instance to check')
   
@@ -53,7 +54,7 @@ def parse_arguments():
       parser_findings.error('argument --region: required when instance id is specified')
     # Set severities to all allowed when searching by CVE
     if args.cve_id:
-      args.severities = inspector_finding_severities
+      args.severities = config.inspector_finding_severities
     # Don't allow detailed when CVE specifed
     if args.detailed and args.cve_id:
       parser_findings.error('argument --detailed: not allowed with argument --cve-id')
@@ -64,7 +65,7 @@ def parse_arguments():
   return args
 
 def check_region_input(region):
-  if region not in inspector_supported_regions:
+  if region not in config.inspector_supported_regions:
     raise argparse.ArgumentTypeError(f'Unsupported Inspector region: {region}')
   return [region]
 
@@ -88,22 +89,29 @@ def check_time_month_input(time):
 
 def check_time_date_input(time):
   try:
-    datetime.datetime.strptime(time, date_format)
+    datetime.datetime.strptime(time, config.date_format)
     return time
   except ValueError:
-    raise argparse.ArgumentTypeError(f'Value must be in correct format, should be {date_format}')
+    raise argparse.ArgumentTypeError(f'Value must be in correct format, should be {config.date_format}')
 
 def check_severities_input(severities):
   severities_list = [s.strip() for s in severities.split(',')]
   for severity in severities_list:
-    if severity.upper() not in inspector_finding_severities:
+    if severity.upper() not in config.inspector_finding_severities:
       raise argparse.ArgumentTypeError(f'Invalid severity: {severity}')
   return severities_list
 
 def check_finding_type_input(finding_type):
-  if finding_type not in inspector_finding_types:
+  if finding_type not in config.inspector_finding_types:
     raise argparse.ArgumentTypeError(f'Invalid finding type: {finding_type}')
-  return inspector_finding_types[finding_type]
+  return config.inspector_finding_types[finding_type]
+
+def check_finding_status_input(finding_status):
+  if finding_status not in config.inspector_finding_statuses:
+    raise argparse.ArgumentTypeError(f'Invalid finding status: {finding_status}')
+  if finding_status == 'all':
+    return [finding_status.upper() for finding_status in config.inspector_finding_statuses if finding_status != 'all']
+  return finding_status.upper()
 
 def check_instance_id_input(instance_id):
   try:
