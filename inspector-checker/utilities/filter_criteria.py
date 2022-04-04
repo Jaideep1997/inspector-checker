@@ -49,13 +49,12 @@ def get_time_filter_criteria(args):
 
   # Month
   elif args.time_month:
-    current_year = datetime.now().year
     months = list(calendar.month_name)
     month_number = months.index(args.time_month.capitalize())
-    month_range = calendar.monthrange(current_year, month_number)
+    month_range = calendar.monthrange(args.time_year, month_number)
     last_day = month_range[1]
-    first_of_month = datetime(current_year, month_number, 1)
-    last_of_month = datetime(current_year, month_number, last_day, 23, 59, 59, 999999)
+    first_of_month = datetime(args.time_year, month_number, 1)
+    last_of_month = datetime(args.time_year, month_number, last_day, 23, 59, 59, 999999)
     time_filter_criteria = get_first_observed_at_filter_criteria(first_of_month, last_of_month)
 
   # Start and end date
