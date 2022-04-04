@@ -97,7 +97,7 @@ def check_time_hours_days_input(time):
       raise Exception
     return itime
   except:
-    raise argparse.ArgumentTypeError(f'invalid day(s), must be a positive integer value: {time}')
+    raise argparse.ArgumentTypeError(f'invalid days, must be a positive integer value: {time}')
 
 def check_time_month_input(time):
   try:
