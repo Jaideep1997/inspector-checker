@@ -142,6 +142,11 @@ inspector-checker findings --month february
 inspector-checker findings --month march -r us-east-1
 ```
 
+Check findings in a specified month last year:
+```
+inspector-checker findings --month december --year 2021
+```
+
 Check findings in a specified time range:
 ```
 inspector-checker findings --start-date 3-5-2022 --end-date 3-16-2022
@@ -199,5 +204,4 @@ inspector-checker findings -i i-0aa55b666c7dd8e99 -r us-east-1 -o
 - Add support for container scanning and findings
 - Add colors to highlight (more) important information
 - Improve (internal) documentation
-- Add support for past years when specifying month
 - Tests
