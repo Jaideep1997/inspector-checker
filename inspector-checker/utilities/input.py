@@ -6,7 +6,7 @@ import re
 import calendar
 import datetime
 
-from config.config import inspector_supported_regions, allowed_finding_severities, date_format
+from config.config import inspector_supported_regions, inspector_finding_severities, inspector_finding_types, date_format
 
 def parse_arguments():
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -22,17 +22,18 @@ def parse_arguments():
   parser_findings = subparser.add_parser('findings', formatter_class=argparse.ArgumentDefaultsHelpFormatter, help='Check Inspector findings')
 
   parser_findings.add_argument('-r', '--region', dest='regions', type=check_region_input, default=inspector_supported_regions, help='region to check Inspector')
-  parser_findings.add_argument('-s', '--severities', type=check_severities_input, default='critical,high', help=f'comma-separated list of severities. Options: {[s.lower() for s in allowed_finding_severities]}')
+  parser_findings.add_argument('-s', '--severities', type=check_severities_input, default='critical,high', help=f'comma-separated list of severities. Options: {[s.lower() for s in inspector_finding_severities]}')
+  parser_findings.add_argument('-t', '--type', dest='finding_type', type=check_finding_type_input, default='package', help=f'type of finding. Options: {[finding_type for finding_type in inspector_finding_types]}')
   parser_findings.add_argument('-c', '--cve-id', type=check_cve_id, help='CVE to check')
   parser_findings.add_argument('-i', '--instance-id', type=check_instance_id_input, help='specific instance to check')
   
   # Findings - time
   parser_findings_time_group = parser_findings.add_mutually_exclusive_group()
-  parser_findings_time_group.add_argument('--hours', dest='time_hours', type=check_time_hours_days_input, help='something...')
-  parser_findings_time_group.add_argument('--days', dest='time_days', type=check_time_hours_days_input, help='something...')
-  parser_findings_time_group.add_argument('--month', dest='time_month', type=check_time_month_input, help='something...')
-  parser_findings.add_argument('--start-date', dest='time_start_date', type=check_time_date_input, help='something...')
-  parser_findings.add_argument('--end-date', dest='time_end_date', type=check_time_date_input, help='something...')
+  parser_findings_time_group.add_argument('--hours', dest='time_hours', type=check_time_hours_days_input, help='Amount of hours before now to check for findings')
+  parser_findings_time_group.add_argument('--days', dest='time_days', type=check_time_hours_days_input, help='Amount of days before now to check for findings')
+  parser_findings_time_group.add_argument('--month', dest='time_month', type=check_time_month_input, help='Amount of months before now to check for findings')
+  parser_findings.add_argument('--start-date', dest='time_start_date', type=check_time_date_input, help='Start date to check findings')
+  parser_findings.add_argument('--end-date', dest='time_end_date', type=check_time_date_input, help='End date to check findings')
 
   parser_findings.add_argument('-d', '--detailed', action='store_true', help='show results by CVE')
   parser_findings.add_argument('--skip-pec', dest='skip_public_exploit_check', action='store_true', help='skip public exploit check')
@@ -52,7 +53,7 @@ def parse_arguments():
       parser_findings.error('argument --region: required when instance id is specified')
     # Set severities to all allowed when searching by CVE
     if args.cve_id:
-      args.severities = allowed_finding_severities
+      args.severities = inspector_finding_severities
     # Don't allow detailed when CVE specifed
     if args.detailed and args.cve_id:
       parser_findings.error('argument --detailed: not allowed with argument --cve-id')
@@ -74,7 +75,7 @@ def check_time_hours_days_input(time):
       raise Exception
     return itime
   except:
-    raise argparse.ArgumentTypeError('Value must be a positive integer value')
+    raise argparse.ArgumentTypeError(f'Value must be a positive integer value: {time}')
 
 def check_time_month_input(time):
   try:
@@ -83,7 +84,7 @@ def check_time_month_input(time):
       raise Exception
     return time
   except:
-    raise argparse.ArgumentTypeError('Value must be a valid month')
+    raise argparse.ArgumentTypeError(f'Value must be a valid month: {time}')
 
 def check_time_date_input(time):
   try:
@@ -95,9 +96,14 @@ def check_time_date_input(time):
 def check_severities_input(severities):
   severities_list = [s.strip() for s in severities.split(',')]
   for severity in severities_list:
-    if severity.upper() not in allowed_finding_severities:
+    if severity.upper() not in inspector_finding_severities:
       raise argparse.ArgumentTypeError(f'Invalid severity: {severity}')
   return severities_list
+
+def check_finding_type_input(finding_type):
+  if finding_type not in inspector_finding_types:
+    raise argparse.ArgumentTypeError(f'Invalid finding type: {finding_type}')
+  return inspector_finding_types[finding_type]
 
 def check_instance_id_input(instance_id):
   try:
@@ -105,7 +111,7 @@ def check_instance_id_input(instance_id):
     instance_id_search = re.search(instance_id_pattern, instance_id).group(0)
     return instance_id
   except:
-    raise argparse.ArgumentTypeError('Invalid instance id')
+    raise argparse.ArgumentTypeError(f'Invalid instance id: {instance_id}')
 
 def check_cve_id(cve_id):
   try:
@@ -113,4 +119,4 @@ def check_cve_id(cve_id):
     cve_id_search = re.search(cve_id_pattern, cve_id).group(0)
     return cve_id_search
   except:
-    raise argparse.ArgumentTypeError('Invalid CVE id')
+    raise argparse.ArgumentTypeError(f'Invalid CVE id" {cve_id}')
