@@ -23,7 +23,7 @@ inspector_supported_regions = [
   'sa-east-1'
 ]
 
-allowed_finding_severities = [
+inspector_finding_severities = [
   'CRITICAL',
   'HIGH',
   'MEDIUM',
@@ -31,6 +31,11 @@ allowed_finding_severities = [
   'INFORMATIONAL',
   'UNTRIAGED'
 ]
+
+inspector_finding_types = {
+  'package': 'PACKAGE_VULNERABILITY',
+  'network': 'NETWORK_REACHABILITY'
+}
 
 date_format = '%m-%d-%Y'
 

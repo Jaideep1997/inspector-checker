@@ -180,7 +180,6 @@ inspector-checker findings -i i-0aa55b666c7dd8e99 -r us-east-1 -o
 # Future Improvements
 - Add other report formats (e.g. json)
 - Add support for container scanning and findings
-- Allow searching of non-CVE findings (e.g. "port range")
 - Add colors to highlight (more) important information
 - Add support for suppressed, closed and all findings
 - Improve (internal) documentation
