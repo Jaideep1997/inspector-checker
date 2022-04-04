@@ -70,7 +70,7 @@ inspector-checker coverage -r us-east-1 -d -o
 The check findings function provides insight into the Inspector findings across an AWS environment. It can highlight all findings, only show recent findings, search for findings with a specified severity, search for CVEs, check specified instances, etc.
 
 By default, it shows:
-- All active CVEs across the AWS environment
+- All active package vulnerabilities across the AWS environment
 - The frequency of each CVE across the AWS environment
 - Public exploits associated with CVEs (via Sploitus)
 - The severity of each CVE
@@ -86,6 +86,8 @@ Additionally, it can show:
 ### Options
 - Region
 - Severities
+- Finding type
+- Finding status
 - CVE
 - Instance
 - Hours
@@ -110,6 +112,21 @@ inspector-checker findings
 Check active findings in a specified region:
 ```
 inspector-checker findings -r us-east-1
+```
+
+Check findings of network reachability type:
+```
+inspector-checker findings -t network
+```
+
+Check closed findings in a specified region:
+```
+inspector-checker findings -r us-east-1 --status closed
+```
+
+Check suppressed findings:
+```
+inspector-checker findings --status suppressed
 ```
 
 Check recent findings:
@@ -181,7 +198,6 @@ inspector-checker findings -i i-0aa55b666c7dd8e99 -r us-east-1 -o
 - Add other report formats (e.g. json)
 - Add support for container scanning and findings
 - Add colors to highlight (more) important information
-- Add support for suppressed, closed and all findings
 - Improve (internal) documentation
 - Add support for past years when specifying month
 - Tests
