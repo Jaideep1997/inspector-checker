@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-inspector_checker_version = '1.1'
+inspector_checker_version = '1.2'
 
 inspector_supported_regions = [
   'us-east-1',
@@ -36,6 +36,13 @@ inspector_finding_types = {
   'package': 'PACKAGE_VULNERABILITY',
   'network': 'NETWORK_REACHABILITY'
 }
+
+inspector_finding_statuses = [
+  'active',
+  'suppressed',
+  'closed',
+  'all'
+]
 
 date_format = '%m-%d-%Y'
 
