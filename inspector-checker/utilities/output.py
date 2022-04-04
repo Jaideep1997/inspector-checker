@@ -171,13 +171,15 @@ def format_detailed_findings_data(findings):
   data = {}
   headers = [
     'Instance',
-    'Region'
+    'Region',
+    'First Observed'
   ]
   for finding_title in findings['unique']:
     data[finding_title] = [headers]
     for resource in findings['unique'][finding_title]['resources']:
       data[finding_title].append([
         resource['id'],
-        resource['region']
+        resource['region'],
+        resource['first_observed']
       ])
   return data
