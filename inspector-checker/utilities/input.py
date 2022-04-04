@@ -9,17 +9,17 @@ from datetime import datetime
 from config import config
 
 def parse_arguments():
-  parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+  parser = argparse.ArgumentParser(formatter_class=ExplicitDefaultsHelpFormatter)
   subparser = parser.add_subparsers(dest='task', required=True)
 
   # Coverage
-  parser_coverage = subparser.add_parser('coverage', formatter_class=argparse.ArgumentDefaultsHelpFormatter, help='Check the coverage of Inspector scanning')
+  parser_coverage = subparser.add_parser('coverage', formatter_class=ExplicitDefaultsHelpFormatter, help='Check the coverage of Inspector scanning')
   parser_coverage.add_argument('-r', '--region', dest='regions', type=check_region_input, default=config.inspector_supported_regions, help='region to check Inspector')
   parser_coverage.add_argument('-d', '--detailed', action='store_true', help='show uncovered instances')
-  parser_coverage.add_argument('-o', '--output', action='store_true', help='save the results in a csv file')
+  parser_coverage.add_argument('-o', '--output', action='store_true', help='save results in a csv file')
 
   # Findings
-  parser_findings = subparser.add_parser('findings', formatter_class=argparse.ArgumentDefaultsHelpFormatter, help='Check Inspector findings')
+  parser_findings = subparser.add_parser('findings', formatter_class=ExplicitDefaultsHelpFormatter, help='Check Inspector findings')
 
   parser_findings.add_argument('-r', '--region', dest='regions', type=check_region_input, default=config.inspector_supported_regions, help='region to check Inspector')
   parser_findings.add_argument('-s', '--severities', type=check_severities_input, default='critical,high', help=f'comma-separated list of severities. Options: {[s.lower() for s in config.inspector_finding_severities]}')
@@ -157,3 +157,11 @@ def check_cve_id(cve_id):
     return cve_id_search
   except AttributeError:
     raise argparse.ArgumentTypeError(f'invalid CVE id" {cve_id}')
+
+class ExplicitDefaultsHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+  """ Hide default values for options that have None or False default values
+  """
+  def _get_help_string(self, action):
+    if action.default in (None, False):
+      return action.help
+    return super()._get_help_string(action)
