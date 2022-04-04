@@ -7,7 +7,7 @@ import calendar
 def get_filter_criteria(args):
   # Default -> active status, finding type and severities
   filter_criteria = {
-    'findingStatus': [get_filter_criteria_values(comparison='EQUALS', value='ACTIVE')],
+    'findingStatus': get_finding_status_filter_criteria(args.finding_status),
     'findingType': [get_filter_criteria_values(comparison='EQUALS', value=args.finding_type)],
     'severity': [get_filter_criteria_values(comparison='EQUALS', value=severity.upper()) for severity in args.severities],
   }
@@ -19,6 +19,12 @@ def get_filter_criteria(args):
   # CVE
   if args.cve_id: filter_criteria['title'] = [get_filter_criteria_values(comparison='PREFIX', value=args.cve_id)]
   return filter_criteria
+
+def get_finding_status_filter_criteria(finding_status):
+  if type(finding_status) == str:
+    return [get_filter_criteria_values(comparison='EQUALS', value=finding_status)]
+  else:
+    return [get_filter_criteria_values(comparison='EQUALS', value=fs) for fs in finding_status]
 
 def get_filter_criteria_values(comparison, value):
   return {
