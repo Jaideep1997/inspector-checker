@@ -5,9 +5,10 @@ from datetime import datetime, timedelta
 import calendar
 
 def get_filter_criteria(args):
-  # Default -> active status and severities
+  # Default -> active status, finding type and severities
   filter_criteria = {
     'findingStatus': [get_filter_criteria_values(comparison='EQUALS', value='ACTIVE')],
+    'findingType': [get_filter_criteria_values(comparison='EQUALS', value=args.finding_type)],
     'severity': [get_filter_criteria_values(comparison='EQUALS', value=severity.upper()) for severity in args.severities],
   }
   # Time
